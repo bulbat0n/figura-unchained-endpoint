@@ -5,7 +5,7 @@ This repository holds a single signed file, `endpoint.json`. The Figura Unchaine
 ## File format
 
 ```json
-{"v":1,"seq":1,"ip":"figura-unchained.alwaysdata.net","sig":"<base64, 64 bytes>"}
+{"v":1,"seq":1,"ip":"<ip>","sig":"<base64, 64 bytes>"}
 ```
 
 | field | type | meaning |
@@ -57,8 +57,8 @@ Private keys live in `~/.figura-unchained-keys/` by default (mode `0600`, passph
 ```
 pip install -r tools/requirements.txt
 
-python tools/sign.py keygen main
-python tools/sign.py keygen backup
+python3 tools/sign.py keygen main
+python3 tools/sign.py keygen backup
 ```
 
 Each command prints the public key, a fingerprint and a ready-to-paste Java constant. Both public keys go into the addon source. The same public keys are stored next to the private ones as `*.pub`.
@@ -66,8 +66,8 @@ Each command prints the public key, a fingerprint and a ready-to-paste Java cons
 Publish the first file:
 
 ```
-python tools/sign.py sign figura-unchained.alwaysdata.net 1
-python tools/sign.py verify --pub <main public key> --pub <backup public key>
+python3 tools/sign.py sign <ip> 1
+python3 tools/sign.py verify --pub <main public key> --pub <backup public key>
 git add endpoint.json
 git commit -m "endpoint seq 1"
 git push
@@ -75,13 +75,13 @@ git push
 
 The addon fetches `https://raw.githubusercontent.com/<user>/<repo>/main/endpoint.json`. GitHub may serve a cached copy for a few minutes after a push.
 
-`--keydir` changes where private keys are read from and must be written before the command (`python tools/sign.py --keydir /path sign ...`). The passphrase is asked interactively. For automation only, it can be provided in the `FU_KEY_PASSPHRASE` environment variable.
+`--keydir` changes where private keys are read from and must be written before the command (`python3 tools/sign.py --keydir /path sign ...`). The passphrase is asked interactively. For automation only, it can be provided in the `FU_KEY_PASSPHRASE` environment variable.
 
 ## Moving the backend
 
 ```
-python tools/sign.py sign new-host.example.net 2 --note "The server moved to a new provider."
-python tools/sign.py verify --pub <main> --pub <backup>
+python3 tools/sign.py sign <new-ip> 2 --note "The server moved to a new provider."
+python3 tools/sign.py verify --pub <main> --pub <backup>
 git commit -am "endpoint seq 2" && git push
 ```
 
@@ -96,7 +96,7 @@ git commit -am "endpoint seq 2" && git push
 ## Checking a file by hand
 
 ```
-python tools/sign.py verify endpoint.json --pub <public key>
+python3 tools/sign.py verify endpoint.json --pub <public key>
 ```
 
 prints `OK` with the seq, host and which key matched, or an error and a non-zero exit code.
